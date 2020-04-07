@@ -1,0 +1,24 @@
+sudo: false
+services:
+- docker
+language: rust
+rust:
+- nightly
+cache: cargo
+before_script:
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker pull clux/muslrust:nightly
+script:
+- make build
+after_success:
+- make tag-latest
+- make tag-semver
+after_script:
+- docker logout
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+env:
+  global:
+    secure: ""
